@@ -1,3 +1,18 @@
+# Project
+checkpoints/
+records/
+Gym Retro Integration.app
+*.nes
+
+# Mac
+.DS_Store
+
+# More Python
+bin/
+include/
+pip-selfcheck.json
+pyvenv.cfg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
