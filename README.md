@@ -7,7 +7,7 @@ Simple self-learning AI based on NEAT that plays Super Mario Bros. for the NES.
 
 ## Installation
     git clone https://github.com/btatarov/mariobot.git
-    cd aibot
+    cd marioibot
     python3 -m venv .
     source bin/activate
     pip install -r requirements.txt
