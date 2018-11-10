@@ -83,7 +83,7 @@ class MarioBot(object):
 
             ob = cv2.resize(ob, (inx, iny))
             ob = cv2.cvtColor(ob, cv2.COLOR_BGR2GRAY)
-            ob = np.reshape(ob, (inx,iny))
+            ob = np.reshape(ob, (inx,iny))[3:,]
             imgarray = np.ndarray.flatten(ob)
 
             nnOutput = net.activate(imgarray)
