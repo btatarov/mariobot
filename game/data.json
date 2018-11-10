@@ -1,0 +1,48 @@
+{
+  "info": {
+    "enemy-collision": {
+      "address": 1169,
+      "type": "|u1"
+    },
+    "enemy-state": {
+      "address": 30,
+      "type": "|u1"
+    },
+    "jump": {
+      "address": 29,
+      "type": "|u1"
+    },
+    "lives": {
+      "address": 1882,
+      "type": "|u1"
+    },
+    "powerup": {
+      "address": 35,
+      "type": "|u1"
+    },
+    "score": {
+      "address": 2016,
+      "type": ">n4"
+    },
+    "x": {
+      "address": 134,
+      "type": "|u1"
+    },
+    "x-screen": {
+      "address": 109,
+      "type": "|u1"
+    },
+    "y": {
+      "address": 206,
+      "type": "|u1"
+    },
+    "y-screen": {
+      "address": 181,
+      "type": "|u1"
+    },
+    "y-velocity": {
+      "address": 159,
+      "type": "|u1"
+    }
+  }
+}
