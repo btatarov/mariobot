@@ -21,4 +21,5 @@ Simple self-learning AI based on NEAT that plays Super Mario Bros. for the NES.
 Use `./run.sh` or `python mariobot.py`
 
 ## Render playback movies
-Use `./convert-movies.sh`
+Use `./convert-movies.sh` to convert all records or:
+`python -m retro.scripts.playback_movie records/directory_uuid/your_record.bk2`
