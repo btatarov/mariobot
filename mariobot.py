@@ -81,12 +81,13 @@ class MarioBot(object):
             else:
                 frame += 1
 
-            screen = cv2.resize(screen, (screen_h, screen_w))
+            screen = cv2.resize(screen, (screen_w, screen_h))[3:,] # truncate HUD lines
             screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
-            screen = np.reshape(screen, (screen_h, screen_w))[3:,]  # truncate HUD lines
-            screen_array = np.ndarray.flatten(screen)
+            # EXPERIMENTAL (you need to remove the background elements from the rom first)
+            # screen = cv2.threshold(screen, 170, 255, cv2.THRESH_TOZERO)[1]
+            # screen = cv2.threshold(screen, 170, 255, cv2.THRESH_OTSU)[1]
 
-            net_output = net.activate(screen_array)
+            net_output = net.activate(np.ndarray.flatten(screen))
             screen, _, _, info = env.step(net_output)
 
             # powerup on screen
