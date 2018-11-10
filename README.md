@@ -4,6 +4,7 @@ Simple self-learning AI based on NEAT that plays Super Mario Bros. for the NES.
 
 ## Requirements
 * Python 3.6
+* FFmpeg (for rendering movies from playback records)
 
 ## Installation
     git clone https://github.com/btatarov/mariobot.git
@@ -20,4 +21,4 @@ Simple self-learning AI based on NEAT that plays Super Mario Bros. for the NES.
 Use `./run.sh` or `python mariobot.py`
 
 ## Render playback movies
-Use `./convet-movies.sh`
+Use `./convert-movies.sh`

@@ -1,2 +1,2 @@
 #!/bin/bash
-find ./record/ -name "*.bk2" -exec python movie.py {} \;
+find ./records/ -name "*.bk2" -exec python lib/python3.6/site-packages/retro/scripts/playback_movie.py {} \;
