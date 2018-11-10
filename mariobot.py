@@ -6,23 +6,24 @@ import random
 import gzip
 import pickle
 import os
+import uuid
 
 main_threads = 12
-env = None
 bot = None
+env = None
+env_id = None
+
 
 def eval_genome(genome, config):
-    global env
+    global env, env_id
 
     if env is None:
-        rnd = random.getrandbits(128)
-        record_dir = './records/' + str(rnd)
+        env_id = str(uuid.uuid4())
+        record_dir = './records/' + env_id
         os.mkdir(record_dir)
         env = retro.make(game='Mario-Nes', state='Level1-NoBg', record=record_dir)
-        env.reset()
-        env.render()
 
-    fitness = bot.eval_genome(genome, config, env)
+    fitness = bot.eval_genome(genome, config, env, env_id)
     return fitness
 
 
@@ -45,8 +46,8 @@ class MarioBot(object):
 
             self.population = neat.Population(self.config)
 
-        self.population.add_reporter(neat.StdOutReporter(True))
         stats = neat.StatisticsReporter()
+        self.population.add_reporter(neat.StdOutReporter(True))
         self.population.add_reporter(stats)
         self.population.add_reporter(neat.Checkpointer(generation_interval=200, filename_prefix='checkpoints/neat-checkpoint-'))
 
@@ -56,70 +57,69 @@ class MarioBot(object):
         with open('checkpoints/winner', 'wb') as output:
             pickle.dump(winner, output, 1)
 
-    def eval_genome(self, genome, config, env):
-        ob = env.reset()
-        ac = env.action_space.sample()
-
-        inx, iny, inc = env.observation_space.shape
-        inx = int(inx/8)
-        iny = int(iny/8)
-
+    def eval_genome(self, genome, config, env, env_id):
         net = neat.nn.recurrent.RecurrentNetwork.create(genome, config)
 
+        screen = env.reset()
+        screen_w, screen_h = int(env.observation_space.shape[1]/8), int(env.observation_space.shape[0]/8)
+        movie_id = '%06d' % (env.movie_id - 1)
+
+        x_max = 0
+        reward = 0
         fitness_current = 0
         fitness_max = 0
-        cur_reward = 0
-        x_max = 0
 
-        frame = 0
+        frame = 1
         frame_skip = 8
         counter = 0
         done = False
 
         while not done:
-            frame += 1
             if frame % frame_skip == 0:
                 env.render()
+                frame = 1
+            else:
+                frame += 1
 
-            ob = cv2.resize(ob, (inx, iny))
-            ob = cv2.cvtColor(ob, cv2.COLOR_BGR2GRAY)
-            ob = np.reshape(ob, (inx,iny))[3:,]
-            imgarray = np.ndarray.flatten(ob)
+            screen = cv2.resize(screen, (screen_h, screen_w))
+            screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
+            screen = np.reshape(screen, (screen_h, screen_w))[3:,]  # truncate HUD lines
+            screen_array = np.ndarray.flatten(screen)
 
-            nnOutput = net.activate(imgarray)
-            ob, rew, done, info = env.step(nnOutput)
+            net_output = net.activate(screen_array)
+            screen, _, _, info = env.step(net_output)
 
             # powerup on screen
             if info['powerup'] == 2:
-                cur_reward += 100
+                reward += 100
 
             # killing an enemy
             if info['enemy-state'] != 0:
-                cur_reward += 200
+                reward += 200
 
             # if jumping to the right
             if info['jump'] > 0 and x_max < (info['x-screen'] * 255 + info['x']):
-                cur_reward += 4
+                reward += 4
 
             # hero moving to the left at the beginning
             if (info['x-screen'] * 255 + info['x']) < 40:
-                cur_reward = cur_reward - 1
+                reward = reward - 1
 
             # pitfalls
             if (info['y'] * info['y-screen']) > 176:
-                cur_reward -= 100
+                reward -= 100
                 done = True
 
             # hero dies
             if info['lives'] < 2:
-                cur_reward -= 100
+                reward -= 100
                 done = True
 
             if x_max < (info['x-screen'] * 255 + info['x']):
                 x_max = info['x-screen'] * 255 + info['x']
 
             fitness_current = (x_max - 40) * 3
-            fitness_current += cur_reward
+            fitness_current += reward
             fitness_current += (info['score'] * 2)
 
             if fitness_current > fitness_max:
@@ -130,7 +130,7 @@ class MarioBot(object):
 
             if done or counter == 250:
                 done = True
-                print('Genome:', genome.key, '\tFit:', fitness_current)
+                print('Genome: %-5d Fit: %-6d Movie: %s/%s' % (genome.key, fitness_current, env_id, movie_id))
 
             genome.fitness = fitness_current
 
