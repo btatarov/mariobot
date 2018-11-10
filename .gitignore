@@ -1,6 +1,6 @@
 # Project
-checkpoints/
-records/
+checkpoints/neat-checkpoint-*
+records/*/*.*
 Gym Retro Integration.app
 *.nes
 

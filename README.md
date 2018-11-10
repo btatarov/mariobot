@@ -12,10 +12,7 @@ Simple self-learning AI based on NEAT that plays Super Mario Bros. for the NES.
     source bin/activate
     pip install -r requirements.txt
 
-    mkdir checkpoints
-    mkdir records
-
-    # put your mario.nes ROM in game/ named rom.nes
+    # put your mario.nes ROM in ./game/ named rom.nes
     mkdir lib/python3.6/site-packages/retro/data/stable/Mario-Nes/
     cp game/* lib/python3.6/site-packages/retro/data/stable/Mario-Nes/
 
