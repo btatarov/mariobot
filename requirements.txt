@@ -5,7 +5,7 @@ gym==0.10.9
 gym-retro==0.6.0
 idna==2.7
 neat-python==0.92
-numpy==1.15.4
+numpy==1.22.0
 opencv-python==3.4.3.18
 pyglet==1.3.2
 requests==2.20.0
